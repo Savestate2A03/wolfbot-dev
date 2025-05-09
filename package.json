@@ -1,0 +1,31 @@
+{
+    "name": "disbot",
+    "version": "0.0.1",
+    "description": "savestate discord bot base",
+    "main": "main.ts",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "regen": "npm run build && npm run start",
+        "redeploy": "npm run build && npm run deploy",
+        "build": "tsc && tsc-alias --resolve-full-paths",
+        "deploy": "node ./build/deploy-commands.js",
+        "start": "node ./build/main.js",
+        "lint": "eslint \"./commands/**/*.{js,ts,json}\" \"./lib/**/*.{js,ts,json}\" \"./*.{js,ts,json}\"",
+        "lint:fix": "npm run lint -- --fix",
+        "fixup": "prettier \"./commands/**/*.{js,ts,json}\" \"./lib/**/*.{js,ts,json}\" \"./*.{js,ts,json,mjs}\" --write && npm run lint:fix"
+    },
+    "author": "Savestate",
+    "license": "MIT",
+    "devDependencies": {
+        "@eslint/js": "9.26.0",
+        "eslint": "9.26.0",
+        "prettier": "3.5.3",
+        "tsc-alias": "1.8.16",
+        "typescript": "5.8.3",
+        "typescript-eslint": "8.32.0"
+    },
+    "dependencies": {
+        "discord.js": "14.19.3"
+    }
+}

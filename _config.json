@@ -1,0 +1,8 @@
+{
+    "_DESCRIPTION": "/// rename this file to config.json after making changes ///",
+
+    "token": "your-token-goes-here",
+    "clientId": "your-application-id-goes-here",
+    "guildId": "your-server-id-goes-here",
+    "googleMapsApiKey": "key"
+}

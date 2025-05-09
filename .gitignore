@@ -1,0 +1,4 @@
+config.json
+/build
+/databases
+/node_modules
