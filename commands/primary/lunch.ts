@@ -80,8 +80,9 @@ export class Lunch extends WolfCommand implements WolfCommandInterface {
                     // editReply() can't immediately modify the reply, give it some time.
                     await delay(2000);
                     await interaction.editReply(
-                        'Address updated! Now: ' +
-                            json.results[0].formatted_address
+                        'i know where u live... ' +
+                            json.results[0].formatted_address.toLowerCase() +
+                            '... >:3'
                     );
                 })();
             });
@@ -99,7 +100,9 @@ export class Lunch extends WolfCommand implements WolfCommandInterface {
         // If the user hasn't set their coordinates yet, let them know and exit
         if (coords === null) {
             await delay(2000);
-            await interaction.editReply('Set your address first!');
+            await interaction.editReply(
+                'did you actually try this . before updating ur address???? idiot.'
+            );
             return;
         }
         // Build the request body with the latitude and longitude of the user
@@ -136,7 +139,9 @@ export class Lunch extends WolfCommand implements WolfCommandInterface {
                     });
                     client.db().write(db, 'places', places);
                     await delay(2000);
-                    await interaction.editReply('Food stuffs updated!');
+                    await interaction.editReply(
+                        'holy shit i did it . ur eateries r updated :3'
+                    );
                 })();
             });
         });
@@ -160,7 +165,7 @@ export class Lunch extends WolfCommand implements WolfCommandInterface {
                 picks = client.db().get<string[]>(db, 'places');
                 if (picks === null) {
                     await interaction.reply(
-                        "No location set or you haven't refreshed ur food list!"
+                        'did u not set ur location ??? did u not run REFRESH ????? god.'
                     );
                     return;
                 }
@@ -176,12 +181,12 @@ export class Lunch extends WolfCommand implements WolfCommandInterface {
                     await interaction.reply('NO ADDRESS???');
                     return;
                 }
-                await interaction.reply('Updating address...');
+                await interaction.reply('google api time ... epic ...');
                 this.update(address, db, interaction);
                 break;
             case 'refresh':
                 // Update the list of places to eat near the user for 'get'
-                await interaction.reply('Updating food stuffs...');
+                await interaction.reply('i am TALKING TO GOOGLE one sec...');
                 await this.updateLocations(interaction, db);
                 break;
         }

@@ -5,6 +5,7 @@ import { WolfClient } from '@lib/client';
 import { Bark } from '@commands/utility/bark';
 import { Lumch } from '@commands/primary/lumch';
 import { Lunch } from '@commands/primary/lunch';
+import { Source } from '@commands/utility/source';
 import config from '@config' with { type: 'json' };
 
 // Create a new client instance using WolfClient extending Client<boolean>
@@ -14,6 +15,7 @@ const client = new WolfClient({ intents: [GatewayIntentBits.Guilds] });
 client.add(new Bark());
 client.add(new Lumch());
 client.add(new Lunch());
+client.add(new Source());
 
 client.once(Events.ClientReady, (readyClient) => {
     console.log(`Ready! Logged in as ${readyClient.user.tag}`);

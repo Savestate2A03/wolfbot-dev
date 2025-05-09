@@ -4,12 +4,14 @@ import { Bark } from '@commands/utility/bark';
 import { Lumch } from '@commands/primary/lumch';
 import { Lunch } from '@commands/primary/lunch';
 import config from '@config' with { type: 'json' };
+import { Source } from '@commands/utility/source';
 
 const commands = [
     // Remember to also add to main.ts!
     new Bark().getCommand().toJSON(),
     new Lumch().getCommand().toJSON(),
-    new Lunch().getCommand().toJSON()
+    new Lunch().getCommand().toJSON(),
+    new Source().getCommand().toJSON()
 ];
 // Grab all the command folders from the commands directory you created earlier
 
