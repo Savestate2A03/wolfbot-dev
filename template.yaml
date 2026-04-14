@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: wolfbot-dev Discord bot
+
+Parameters:
+  DiscordPublicKey:
+    Type: String
+    Description: Discord application public key
+  DiscordApplicationId:
+    Type: String
+    Description: Discord application ID
+  GoogleMapsApiKey:
+    Type: String
+    Description: Google Maps API key
+    NoEcho: true
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 256
+    Runtime: nodejs24.x
+    Architectures:
+      - arm64
+
+Resources:
+  BotFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.handler
+      CodeUri: build/
+      FunctionUrlConfig:
+        AuthType: NONE
+      Environment:
+        Variables:
+          DISCORD_PUBLIC_KEY: !Ref DiscordPublicKey
+          DISCORD_APPLICATION_ID: !Ref DiscordApplicationId
+          GOOGLE_MAPS_API_KEY: !Ref GoogleMapsApiKey
+          DYNAMODB_TABLE_NAME: !Ref BotTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BotTable
+        - Statement:
+            - Effect: Allow
+              Action: lambda:InvokeFunction
+              Resource: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AWS::StackName}-BotFunction-*
+
+  BotTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${AWS::StackName}-data
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+
+Outputs:
+  BotEndpoint:
+    Description: URL to set as Discord Interactions Endpoint URL
+    Value: !GetAtt BotFunctionUrl.FunctionUrl
+  FunctionArn:
+    Value: !GetAtt BotFunction.Arn
+  TableName:
+    Value: !Ref BotTable

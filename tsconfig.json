@@ -1,22 +1,18 @@
 {
     "compilerOptions": {
-        "baseUrl": "./",
+        "target": "ES2024",
         "module": "ESNext",
-        "target": "ES2023",
-        "noImplicitAny": true,
-        "removeComments": true,
         "moduleResolution": "bundler",
-        "resolveJsonModule": true,
-        "preserveConstEnums": true,
+        "strict": true,
+        "noImplicitAny": true,
         "strictNullChecks": true,
-        "sourceMap": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "rootDir": "./src",
         "outDir": "./build",
-        "paths": {
-            "@lib/*": ["./lib/*"],
-            "@commands/*": ["./commands/*"],
-            "@config": ["./config.json"]
-        }
+        "sourceMap": true,
+        "types": ["node"]
     },
-    "include": ["**/*"],
-    "exclude": ["**/*.spec.ts", "eslint.config.mjs", "prettier.config.mjs"]
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "build", "scripts"]
 }

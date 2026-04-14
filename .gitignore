@@ -1,4 +1,10 @@
-config.json
-/build
-/databases
-/node_modules
+# node
+node_modules/
+build/
+
+# secrets and keys
+.env
+
+# aws cli and sam
+samconfig.toml
+.aws-sam/
