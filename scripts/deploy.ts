@@ -18,7 +18,7 @@ const GUIDED: boolean = process.argv
     .includes("--guided");
 
 // Sanity checks
-const required = ["DISCORD_PUBLIC_KEY", "DISCORD_APPLICATION_ID"];
+const required = ["DISCORD_PUBLIC_KEY", "DISCORD_APPLICATION_ID", "DISCORD_BOT_TOKEN"];
 
 for (const key of required) {
     if (!env[key]) {
@@ -31,6 +31,7 @@ for (const key of required) {
 const overrides = [
     `DiscordPublicKey="${env.DISCORD_PUBLIC_KEY}"`,
     `DiscordApplicationId="${env.DISCORD_APPLICATION_ID}"`,
+    `DiscordBotToken="${env.DISCORD_BOT_TOKEN}"`,
 ].join(" ");
 
 console.log("epic sauce time ... (building and deploying)");

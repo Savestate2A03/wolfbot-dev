@@ -2,18 +2,21 @@ import type { APIGatewayProxyEventV2 } from "aws-lambda";
 import { verifyDiscordRequest, getPublicKey } from "./discord/verify.js";
 import { pong, message, error } from "./discord/respond.js";
 import { patchOriginalResponse } from "./discord/api.js";
-import type { DiscordInteraction, DeferredTaskEvent } from "./discord/types.js";
+import type { DiscordInteraction, DeferredTaskEvent, ReminderTaskEvent } from "./discord/types.js";
 import { InteractionType } from "./discord/types.js";
-import { getCommand, isDeferredCommand } from "./commands/registry.js";
+import { getCommand, isDeferredCommand, isReminderCommand } from "./commands/registry.js";
 import "./commands/src/index.js";
 
 /* Main AWS handler */
 
 // Split routing. If it's a deferred task, route it there, otherwise it's likely a
 // new HTTP request. Handle each accordingly, otherwise explode into 1000 pieces.
-export const handler = async (event: APIGatewayProxyEventV2 | DeferredTaskEvent) => {
+export const handler = async (event: APIGatewayProxyEventV2 | DeferredTaskEvent | ReminderTaskEvent) => {
     if ("deferredTask" in event) {
         return handleDeferredTask(event as DeferredTaskEvent);
+    }
+    if ("reminderTask" in event) {
+        return handleReminderTask(event as ReminderTaskEvent);
     }
     if ("requestContext" in event) {
         return handleHttpRequest(event as APIGatewayProxyEventV2);
@@ -69,6 +72,22 @@ async function handleHttpRequest(event: APIGatewayProxyEventV2) {
         console.error("INTERNAL EXPLOSION ERROR DIE -> ", err);
         return error(500, "INTERNAL EXPLOSION ERROR DIE");
     }
+}
+
+// Reminder Tasks (EventBridge)
+async function handleReminderTask(event: ReminderTaskEvent) {
+    console.log("REMINDER TASK IS ON !!!", event.command, event.guildId, event.uuid);
+    const cmd = getCommand(event.command);
+    if (!cmd || !isReminderCommand(cmd)) {
+        console.error("oh boy, no reminder handler for command", event.command);
+        return { statusCode: 200, body: "ok" };
+    }
+    try {
+        await cmd.handleReminder(event);
+    } catch (err) {
+        console.error("REMINDER TASK EXPLOSION", err);
+    }
+    return { statusCode: 200, body: "ok" };
 }
 
 // Deferred Tasks

@@ -9,6 +9,10 @@ Parameters:
   DiscordApplicationId:
     Type: String
     Description: Discord application ID
+  DiscordBotToken:
+    Type: String
+    NoEcho: true
+    Description: Discord bot token (stored in SSM SecureString)
 
 Globals:
   Function:
@@ -19,9 +23,41 @@ Globals:
       - arm64
 
 Resources:
+  BotTokenSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub ${AWS::StackName}/discord-bot-token
+      Description: Discord bot token
+      SecretString: !Ref DiscordBotToken
+
+  SchedulerInvokeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: scheduler.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: InvokeBotFunction
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AWS::StackName}-bot
+
+  SyncwatchScheduleGroup:
+    Type: AWS::Scheduler::ScheduleGroup
+    Properties:
+      Name: !Sub ${AWS::StackName}-syncwatch
+
   BotFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-bot
       Handler: handler.handler
       CodeUri: build/
       FunctionUrlConfig:
@@ -30,14 +66,31 @@ Resources:
         Variables:
           DISCORD_PUBLIC_KEY: !Ref DiscordPublicKey
           DISCORD_APPLICATION_ID: !Ref DiscordApplicationId
+          DISCORD_BOT_TOKEN_SECRET_ARN: !Ref BotTokenSecret
           DYNAMODB_TABLE_NAME: !Ref BotTable
+          SCHEDULER_GROUP_NAME: !Sub ${AWS::StackName}-syncwatch
+          SCHEDULER_ROLE_ARN: !GetAtt SchedulerInvokeRole.Arn
+          BOT_FUNCTION_ARN: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AWS::StackName}-bot
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref BotTable
         - Statement:
             - Effect: Allow
               Action: lambda:InvokeFunction
-              Resource: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AWS::StackName}-BotFunction-*
+              Resource: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AWS::StackName}-bot
+            - Effect: Allow
+              Action:
+                - scheduler:CreateSchedule
+                - scheduler:DeleteSchedule
+                - scheduler:GetSchedule
+                - scheduler:UpdateSchedule
+              Resource: !Sub arn:aws:scheduler:${AWS::Region}:${AWS::AccountId}:schedule/${AWS::StackName}-syncwatch/*
+            - Effect: Allow
+              Action: iam:PassRole
+              Resource: !GetAtt SchedulerInvokeRole.Arn
+            - Effect: Allow
+              Action: secretsmanager:GetSecretValue
+              Resource: !Ref BotTokenSecret
 
   BotTable:
     Type: AWS::DynamoDB::Table
@@ -63,3 +116,5 @@ Outputs:
     Value: !GetAtt BotFunction.Arn
   TableName:
     Value: !Ref BotTable
+  SchedulerRoleArn:
+    Value: !GetAtt SchedulerInvokeRole.Arn

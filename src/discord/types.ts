@@ -1,5 +1,7 @@
 // ENUMS
 
+import { Nullable, Optional } from "../lib/types";
+
 export const InteractionType = {
     PING: 1,
     APPLICATION_COMMAND: 2,
@@ -95,6 +97,13 @@ export interface DeferredTaskEvent {
     options: DeferredTaskOptions;
 }
 
+export interface ReminderTaskEvent {
+    reminderTask: true;
+    command: string;
+    guildId: string;
+    uuid: string;
+}
+
 export interface DiscordSubCommand {
     subcommand: string;
     options: Map<string, string | number | boolean>;
@@ -122,6 +131,11 @@ export function getUser(interaction: DiscordInteraction): DiscordUser {
     const user = interaction.member?.user ?? interaction.user;
     if (!user) throw new Error("no interaction user ?? A GHOST??? WHAT");
     return user;
+}
+
+export function getNick(interaction: DiscordInteraction): Optional<string> {
+    const nick = interaction.member?.nick ?? undefined;
+    return nick;
 }
 
 // ENUM TYPEOFS
