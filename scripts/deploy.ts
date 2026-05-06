@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { execSync } from "node:child_process";
 
-// Grab environmental variables from .env file
+// grab environmental variables from .env file
 const env = Object.fromEntries(
     readFileSync(".env", "utf-8")
         .split("\n")
@@ -12,8 +12,13 @@ const env = Object.fromEntries(
         }),
 );
 
+const GUIDED: boolean = process.argv
+    .slice(2)
+    .map((arg: string) => arg.toLowerCase().trim())
+    .includes("--guided");
+
 // Sanity checks
-const required = ["DISCORD_PUBLIC_KEY", "DISCORD_APPLICATION_ID", "GOOGLE_MAPS_API_KEY"];
+const required = ["DISCORD_PUBLIC_KEY", "DISCORD_APPLICATION_ID"];
 
 for (const key of required) {
     if (!env[key]) {
@@ -26,10 +31,12 @@ for (const key of required) {
 const overrides = [
     `DiscordPublicKey="${env.DISCORD_PUBLIC_KEY}"`,
     `DiscordApplicationId="${env.DISCORD_APPLICATION_ID}"`,
-    `GoogleMapsApiKey="${env.GOOGLE_MAPS_API_KEY}"`,
 ].join(" ");
 
 console.log("epic sauce time ... (building and deploying)");
-execSync(`sam build && sam deploy --parameter-overrides ${overrides}`, {
-    stdio: "inherit",
-});
+execSync(
+    `sam build && sam deploy --parameter-overrides ${overrides} --stack-name sidebot-dev ${GUIDED ? "--guided" : ""}`,
+    {
+        stdio: "inherit",
+    },
+);

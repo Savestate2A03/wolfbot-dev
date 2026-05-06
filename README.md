@@ -14,12 +14,8 @@ No runtime dependencies!
 
 | Command                         | Description                                   |
 |---------------------------------|-----------------------------------------------|
-| `/bark`                         | awrruf !!                                     |
+| `/syncwatch`                    | host a syncwatch!                             |
 | `/source`                       | link to here :3 (hi)                          |
-| `/lumch`                        | random daily lumch pick from hardcoded list   |
-| `/lunch set location:<address>` | set your /lunch location                      |
-| `/lunch refresh`                | get nearby restaurants from google            |
-| `/lunch get`                    | get ur eatery pick                            |
 
 ## Setup
 
@@ -29,9 +25,6 @@ No runtime dependencies!
 - AWS SAM CLI
 - AWS credentials configured
 - Bot token
-- Google Maps API key with these APIs enabled:
-    - Geocoding API
-    - Places API (New)
 
 Additionally, make sure the development dependencies are installed:
 
@@ -48,7 +41,6 @@ DISCORD_BOT_TOKEN=
 DISCORD_PUBLIC_KEY=
 DISCORD_APPLICATION_ID=
 DISCORD_GUILD_ID=Optional
-GOOGLE_MAPS_API_KEY=
 ```
 
 ### Deploy

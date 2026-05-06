@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: wolfbot-dev Discord bot
+Description: sidebot-dev Discord bot
 
 Parameters:
   DiscordPublicKey:
@@ -9,10 +9,6 @@ Parameters:
   DiscordApplicationId:
     Type: String
     Description: Discord application ID
-  GoogleMapsApiKey:
-    Type: String
-    Description: Google Maps API key
-    NoEcho: true
 
 Globals:
   Function:
@@ -34,7 +30,6 @@ Resources:
         Variables:
           DISCORD_PUBLIC_KEY: !Ref DiscordPublicKey
           DISCORD_APPLICATION_ID: !Ref DiscordApplicationId
-          GOOGLE_MAPS_API_KEY: !Ref GoogleMapsApiKey
           DYNAMODB_TABLE_NAME: !Ref BotTable
       Policies:
         - DynamoDBCrudPolicy:

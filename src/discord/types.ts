@@ -16,6 +16,13 @@ export const InteractionResponseType = {
     UPDATE_MESSAGE: 7,
 } as const;
 
+export const ApplicationCommandType = {
+    CHAT_INPUT: 1,
+    USER: 2,
+    MESSAGE: 3,
+    PRIMARY_ENTRY_POINT: 4,
+} as const;
+
 export const ApplicationCommandOptionType = {
     SUB_COMMAND: 1,
     SUB_COMMAND_GROUP: 2,
@@ -62,11 +69,21 @@ export interface DiscordInteraction {
     data?: DiscordInteractionData;
     guild_id?: string;
     channel_id?: string;
-    member?: { user: DiscordUser };
+    member?: {
+        user: DiscordUser;
+        nick: string | null;
+    };
     user?: DiscordUser;
 }
 
 // INTERNAL TYPES
+
+export type DeferredTaskExtras = Record<string, string | number | boolean>;
+
+export type DeferredTaskOptions = {
+    [key: string]: string | number | boolean | DeferredTaskExtras | undefined;
+    EXTRAS?: DeferredTaskExtras;
+};
 
 export interface DeferredTaskEvent {
     deferredTask: true;
@@ -75,7 +92,7 @@ export interface DeferredTaskEvent {
     userId: string;
     command: string;
     subcommand: string;
-    options: Record<string, string | number | boolean>;
+    options: DeferredTaskOptions;
 }
 
 export interface DiscordSubCommand {
@@ -106,3 +123,7 @@ export function getUser(interaction: DiscordInteraction): DiscordUser {
     if (!user) throw new Error("no interaction user ?? A GHOST??? WHAT");
     return user;
 }
+
+// ENUM TYPEOFS
+
+export type ApplicationCommandOptionTypeEnum = typeof ApplicationCommandOptionType;

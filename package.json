@@ -5,6 +5,7 @@
   "scripts": {
     "build": "node esbuild.config.mjs",
     "deploy": "npm run build && npx tsx scripts/deploy.ts",
+    "deploy:guided": "npm run build && npx tsx scripts/deploy.ts --guided",
     "deploy:commands": "npx tsx scripts/deploy-commands.ts",
     "lint": "eslint src/ scripts/"
   },
@@ -13,7 +14,7 @@
     "@aws-sdk/client-lambda": "^3.1030.0",
     "@aws-sdk/lib-dynamodb": "^3.1030.0",
     "@types/aws-lambda": "^8.x",
-    "@types/node": "^24.x",
+    "@types/node": "^24.12.2",
     "esbuild": "^0.25.x",
     "eslint": "^9.x",
     "tsx": "^4.x",

@@ -10,22 +10,22 @@ export interface LambdaResponse {
 }
 
 export interface CommandOption {
-    name: string;
-    description: string;
-    type: number;
-    required?: boolean;
-    options?: CommandOption[];
+    readonly name: string;
+    readonly description: string;
+    readonly type: number;
+    readonly required?: boolean;
+    readonly options?: readonly CommandOption[];
 }
 
 export interface CommandDefinition {
-    name: string;
-    description: string;
-    type: number;
-    options?: CommandOption[];
+    readonly name: string;
+    readonly description: string;
+    readonly type: number;
+    readonly options?: readonly CommandOption[];
 }
 
 export interface Command {
-    definition: CommandDefinition;
+    readonly definition: CommandDefinition;
     handle(interaction: DiscordInteraction): Promise<LambdaResponse> | LambdaResponse;
 }
 

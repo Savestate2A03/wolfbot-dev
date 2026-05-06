@@ -9,7 +9,7 @@ const source: Command = {
         type: 1,
     },
     handle: () =>
-        message("yipeeeee \\<3 <https://github.com/Savestate2A03/wolfbot-dev>"),
+        message("yipeeeee \\<3 <https://github.com/Savestate2A03/wolfbot-dev/tree/sidebot-dev>"),
 };
 
 registerCommand(source);
